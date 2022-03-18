@@ -15,10 +15,11 @@ services:
       clickhouse-network:
         ipv4_address: 172.23.0.11
     ports:
-      - "127.0.0.1:8123:8123"
-      - "127.0.0.1:9000:9000"
+      - "8123:8123"
+      - "9000:9000"
     volumes:
       - ${PWD}/clickhouse01:/etc/clickhouse-server
+      - ${PWD}/clickhouse01_db:/var/lib/clickhouse
     depends_on:
       - zookeeper
   clickhouse02:
@@ -28,8 +29,12 @@ services:
     networks:
       clickhouse-network:
         ipv4_address: 172.23.0.12
+    ports:
+      - "8124:8123"
+      - "9001:9000"
     volumes:
       - ${PWD}/clickhouse02:/etc/clickhouse-server
+      - ${PWD}/clickhouse02_db:/var/lib/clickhouse
     depends_on:
       - zookeeper
   clickhouse03:
@@ -39,8 +44,12 @@ services:
     networks:
       clickhouse-network:
         ipv4_address: 172.23.0.13
+    ports:
+      - "8125:8123"
+      - "9002:9000"
     volumes:
       - ${PWD}/clickhouse03:/etc/clickhouse-server
+      - ${PWD}/clickhouse03_db:/var/lib/clickhouse
     depends_on:
       - zookeeper
   clickhouse04:
@@ -50,8 +59,12 @@ services:
     networks:
       clickhouse-network:
         ipv4_address: 172.23.0.14
+    ports:
+      - "8126:8123"
+      - "9003:9000"
     volumes:
       - ${PWD}/clickhouse04:/etc/clickhouse-server
+      - ${PWD}/clickhouse04_db:/var/lib/clickhouse
     depends_on:
       - zookeeper
 
