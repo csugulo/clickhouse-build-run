@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<company>
+<clickhouse>
     <logger>
-        <level>debug</level>
+        <level>error</level>
         <console>true</console>
         <log remove="remove"/>
         <errorlog remove="remove"/>
@@ -35,7 +35,7 @@
     <mlock_executable>false</mlock_executable>
 
     <remote_servers>
-        <company_cluster>
+        <ch_cluster>
             <shard>
                 <replica>
                     <host>clickhouse01</host>
@@ -56,7 +56,7 @@
                     <port>9000</port>
                 </replica>
             </shard>
-        </company_cluster>
+        </ch_cluster>
     </remote_servers>
 
     <zookeeper>
@@ -67,7 +67,7 @@
     </zookeeper>
 
     <macros>
-        <cluster>company_cluster</cluster>
+        <cluster>ch_cluster</cluster>
         <shard>${SHARD}</shard>
         <replica>clickhouse${REPLICA}</replica>
     </macros>
@@ -77,4 +77,4 @@
     </distributed_ddl>
 
     <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
-</company>
+</clickhouse>

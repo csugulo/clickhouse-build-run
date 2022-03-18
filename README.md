@@ -23,7 +23,7 @@ Containers will be available in docker network `172.23.0.0/24`
 ## Profiles
 
 - `default` - no password
-- `admin` - password `123`
+- `admin` - password `admin`
 
 ## Test it
 
@@ -39,9 +39,8 @@ docker exec -it clickhouse01 clickhouse-client -h localhost
 
 Create a test database and table (sharded and replicated)
 ```sql
-CREATE DATABASE company_db ON CLUSTER 'company_cluster';
 
-CREATE TABLE company_db.events ON CLUSTER 'company_cluster' (
+CREATE TABLE events ON CLUSTER 'ch_cluster' (
     time DateTime,
     uid  Int64,
     type LowCardinality(String)
@@ -50,13 +49,13 @@ ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/table', '{rep
 PARTITION BY toDate(time)
 ORDER BY (uid);
 
-CREATE TABLE company_db.events_distr ON CLUSTER 'company_cluster' AS company_db.events
-ENGINE = Distributed('company_cluster', company_db, events, uid);
+CREATE TABLE events_distr ON CLUSTER 'ch_cluster' AS events
+ENGINE = Distributed('ch_cluster', default, events, uid);
 ```
 
 Load some data
 ```sql
-INSERT INTO company_db.events_distr VALUES
+INSERT INTO events_distr VALUES
     ('2020-01-01 10:00:00', 100, 'view'),
     ('2020-01-01 10:05:00', 101, 'view'),
     ('2020-01-01 11:00:00', 100, 'contact'),
@@ -67,10 +66,10 @@ INSERT INTO company_db.events_distr VALUES
 
 Check data from current shard
 ```sql
-SELECT * FROM company_db.events;
+SELECT * FROM events;
 ```
 
 Check data from all cluster
 ```sql
-SELECT * FROM company_db.events_distr;
+SELECT * FROM events_distr;
 ```
