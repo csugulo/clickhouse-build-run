@@ -84,7 +84,7 @@ Containers will be available in docker network `172.23.0.0/24`
 - `default` - no password
 - `admin` - password `admin`
 
-## test Distributed table
+## Test distributed table
 
 Get example dataset
 ```sh
