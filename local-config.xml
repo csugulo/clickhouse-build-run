@@ -3,8 +3,8 @@
     <logger>
         <level>trace</level>
         <console>true</console>
-        <log remove="remove"/>
-        <errorlog remove="remove"/>
+        <log>${LOG_DIR}/clickhouse-server.log</log>
+        <errorlog>${LOG_DIR}/clickhouse-server.err.log</errorlog>
     </logger>
 
     <query_log>

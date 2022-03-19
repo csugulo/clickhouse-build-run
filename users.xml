@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<company>
+<clickhouse>
     <profiles>
         <default>
             <max_memory_usage>10000000000</max_memory_usage>
@@ -40,4 +40,4 @@
             </interval>
         </default>
     </quotas>
-</company>
+</clickhouse>

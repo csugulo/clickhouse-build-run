@@ -13,9 +13,9 @@ config:
 
 .PHONY: config-local
 config-local:
-	rm -rf clickhouse
+	rm -rf clickhouse clickhouse_log clickhouse_db
 	mkdir -p clickhouse
-	DB_DIR=$(CURDIR)/clickhouse envsubst < local-config.xml > clickhouse/config.xml
+	DB_DIR=$(CURDIR)/clickhouse_db LOG_DIR=$(CURDIR)/clickhouse_log envsubst < local-config.xml > clickhouse/config.xml
 	cp users.xml clickhouse/users.xml
 
 .PHONY: up
