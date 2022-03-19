@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <clickhouse>
     <logger>
-        <level>error</level>
+        <level>trace</level>
         <console>true</console>
         <log remove="remove"/>
         <errorlog remove="remove"/>
