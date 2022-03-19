@@ -1,13 +1,72 @@
-# Clickhouse Cluster
+# Build and Run Clickhouse
 
-Clickhouse cluster with 2 shards and 2 replicas built with docker-compose.
+## Build and run Clickhouse from source (Ubuntu 20.04)
 
-## Run
-
-Run single command, and it will copy configs for each node and
-run clickhouse cluster `company_cluster` with docker-compose
+1. install dependencies
 ```sh
-make config up
+# install clang++-14/clang-14
+wget https://apt.llvm.org/llvm.sh
+chmod +x llvm.sh
+sudo ./llvm.sh 14
+
+sudo apt install -y git bash cmake ninja-build libicu-dev libreadline-dev gperf expect python python-lxml python-termcolor python-requests curl perl sudo openssl netcat-openbsd telnet
+```
+
+2. download source
+```sh
+git clone https://github.com/yandex/ClickHouse.git && cd ClickHouse
+# I use 22.2 version
+git checkout 22.2 && git pull && git submodule init && git submodule update --jobs 4
+```
+
+3. configure and make
+```sh
+mkdir build_release && cd build_release
+
+cmake .. -DCMAKE_CXX_COMPILER=/usr/bin/clang++-14 -DCMAKE_C_COMPILER=/usr/bin/clang-14 -DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE -DCMAKE_BUILD_TYPE=Release
+
+cmake --build . --parallel 4
+```
+
+4. run server
+```sh
+./programs/clickhouse-server
+```
+
+
+5. run client
+```sh
+./programs/clickhouse-client
+```
+
+## Run Clickhouse cluster on docker (Ubuntu 20.04)
+
+Clickhouse cluster with 4 shards and 1 replicas built with docker-compose.
+
+1. install docker and docker-compose
+```sh
+sudo apt-get update && sudo apt-get install ca-certificates curl gnupg lsb-release
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
+
+# add current user to docker group, then exit and re-login
+sudo usermod -aG docker $USER
+```
+
+2. generate cluster config
+
+```sh
+make config
+```
+
+3. run culster
+
+```sh
+make up
 ```
 
 Containers will be available in docker network `172.23.0.0/24`
@@ -25,19 +84,14 @@ Containers will be available in docker network `172.23.0.0/24`
 - `default` - no password
 - `admin` - password `admin`
 
-## Test it
+## test Distributed table
 
-Login to clickhouse01 console (first node's ports are mapped to localhost)
-```sh
-clickhouse-client
-```
-
-Get test dataset
+Get example dataset
 ```sh
 curl https://datasets.clickhouse.com/hits/tsv/hits_v1.tsv.xz | unxz --threads=`nproc` > hits_v1.tsv
 ```
 
-Create test table (sharded and replicated)
+Create example table (sharded and replicated)
 ```sql
 CREATE TABLE hits_v1 ON CLUSTER 'ch_cluster' (
     WatchID UInt64,
@@ -185,7 +239,7 @@ CREATE TABLE hits_v1_dist ON CLUSTER 'ch_cluster' AS hits_v1
 ENGINE = Distributed('ch_cluster', default, hits_v1, UserID);
 ```
 
-Load data
+insert example data
 ```sh
 cat hits_v1.tsv | clickhouse-client --query "INSERT INTO hits_v1_dist FORMAT TSV" --max_insert_block_size=100000
 ```
