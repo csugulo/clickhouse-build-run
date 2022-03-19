@@ -11,6 +11,13 @@ config:
 	cp users.xml clickhouse03/users.xml
 	cp users.xml clickhouse04/users.xml
 
+.PHONY: config-local
+config-local:
+	rm -rf clickhouse
+	mkdir -p clickhouse
+	DB_DIR=$(CURDIR)/clickhouse envsubst < local-config.xml > clickhouse/config.xml
+	cp users.xml clickhouse/users.xml
+
 .PHONY: up
 up:
 	docker-compose up -d

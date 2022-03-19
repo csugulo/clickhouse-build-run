@@ -31,7 +31,6 @@
     <users_config>users.xml</users_config>
     <default_profile>default</default_profile>
     <default_database>default</default_database>
-    <timezone>Europe/Moscow</timezone>
     <mlock_executable>false</mlock_executable>
 
     <remote_servers>
